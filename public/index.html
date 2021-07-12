@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Microsoft Team</title>
+
+        <!-- <meta content="width=device-width, initial-scale=1" name="viewport" /> -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+        <link rel='stylesheet' href='/css/app.css' type="text/css">
+        <link rel='stylesheet' href='/css/defualt.css' type="text/css">
+        
+        <script src='/socket.io/socket.io.js'></script>
+        <script type="module" src='/js/rtc.js'></script>
+        <script type="module" src='/js/events.js'></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/webrtc-adapter/7.3.0/adapter.min.js" integrity="sha256-2qQheewaqnZlXJ3RJRghVUwD/3fD9HNqxh4C+zvgmF4=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js'></script>
+        <script src='https://cdn.rawgit.com/yahoo/xss-filters/master/dist/xss-filters.js'></script>
+        <script src='/js/autolink.js'></script>
+    </head>
+
+    <body style="background-color: rgb(41, 42, 105);font-family: Georgia;">
+        <div class="custom-modal" id='recording-options-modal'>
+            <div class="custom-modal-content">
+                <div class="row text-center">
+                    <div class="col-md-6 mb-2">
+                        <span class="record-option" id='record-video'>Record video</span>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <span class="record-option" id='record-screen'>Record screen</span>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-12 text-center">
+                        <button class="btn btn-outline-danger" id='closeModal'>Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        <nav class="navbar fixed-top bg-info rounded-0 d-print-none" id="topper">
+
+            <div class="pull-right room-comm" hidden id="toppercenter">
+                <div class="y" style="font-weight: 20px"  style="margin-left: 10px; font-size: 100px; color:aliceblue";> 
+                    <img src="https://image.flaticon.com/icons/png/512/732/732221.png" alt="" height="20px" width="20" > <td></td> <td>Microsoft Teams</div>
+                <button class="btn btn-sm rounded-0 btn-no-effect" id='toggle-video' title="Hide Video">
+                    <i class="fa fa-video fa-2x text-white"></i>
+                </button>
+
+                <button class="btn btn-sm rounded-0 btn-no-effect" id='toggle-mute' title="Mute">
+                    <i class="fa fa-microphone-alt fa-2x text-white"></i>
+                </button>
+
+                <button class="btn btn-sm text-white pull-right btn-no-effect" id='toggle-chat-pane'>
+                    <i class="fa fa-comment fa-2x"></i> <span class="badge badge-danger very-small font-weight-lighter" id='new-chat-notification' hidden>New</span>
+                </button>
+
+                <button class="btn btn-sm rounded-0 btn-no-effect text-white">
+                    <a href="/" class="text-white text-decoration-none"><i class="fa fa-sign-out-alt fa-2x text-white" title="Leave"></i></a>
+                </button>
+            </div>
+        </nav>
+
+        <div class="container-fluid" id='room-create' hidden style="padding: 0;">
+            <nav class="main-nav" style="padding-top: 15px;">
+                <img src="https://i.ibb.co/wwLhz98/logo.png" alt="Microsoft" class="logo" style="padding-left: 20px;">
+                <h3 style="margin: auto; font-size:19px; font-weight: 750;"> &nbsp;&nbsp; | Teams</h3>
+                <ul class="main-menu" style="margin: auto;"">
+                    <li><a  class="manya" href="#">Products</a></li>
+                    <li><a class="manya" href="#">Resources</a></li>
+                    <li><a class="manya" href="#">Solutions</a></li>
+                    <li><a class="manya" href="#">Pricing</a></li>
+                    <li><a class="manya" href="#">support</a></li>
+                    <li><a class="manya" href="#">More</a></li>
+                </ul>
+                <ul class="right-menu" style="margin: auto;"">
+                    <li>
+                        <a class="manya" href="#">
+                        <i class="fas fa-search "></i>
+                        </a>
+                    </li>
+                    <li>
+                    <a class="manya" href="#">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                    </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="newdiv"><div style="text-align: center;
+                position: absolute;
+                left: 32%;
+                font-size: larger;" >Now use Microsoft Teams with family and friends to call, chat, and make plans.
+            </div></div>
+
+
+            <div class="row">
+                <div class="col-12 h2 mt-5 text-center">Create Room</div>
+            </div>
+            
+            <div class="nike">
+                <div class="row mt-2">
+                    <div class="col-12 text-center">
+                        <span class="form-text small  text-danger" id='err-msg'></span>
+                    </div>
+
+                    <div class="col-12 col-md-4 offset-md-4 mb-3">
+                    <label for="room-name">Room Name</label>
+                    <input type="text" id='room-name' class="form-control " placeholder="Room Name">
+                    </div>
+
+                    <div class="col-12 col-md-4 offset-md-4 mb-3">
+                    <label for="your-name">Your Name</label>
+                    <input type="text" id='your-name' class="form-control " placeholder="Your Name">
+                </div>
+
+                    <div class="col-12 col-md-4 offset-md-4 mb-3">
+                    <button id='create-room' class="btn btn-block btn-info">Create Room</button>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-4 offset-md-4 mb-3" id='room-created'></div>
+            </div>
+
+        </div>
+
+        <div class="container-fluid" id='username-set' hidden>
+            <nav class="main-nav">
+                <img src="https://i.ibb.co/wwLhz98/logo.png" alt="Microsoft" class="logo">
+                &nbsp;&nbsp; <h3 style="margin: auto; font-size:19px; font-weight: 750; padding-right: 30px;"> &nbsp;&nbsp;|  Teams</h3>
+                <ul class="main-menu">
+                    <li><a  class="manya" href="#">  Products</a></li>
+                    <li><a class="manya" href="#"> Resources</a></li>
+                    <li><a class="manya" href="#">Solutions</a></li>
+                    <li><a class="manya" href="#">Pricing</a></li>
+                    <li><a class="manya" href="#">support</a></li>
+                    <li><a class="manya" href="#">More</a></li>
+                </ul>
+                <ul class="right-menu">
+                    <li>
+                    <a class="manya" href="#">
+                        <i class="fas fa-search "></i>
+                    </a>
+                    </li>
+                    <li>
+                    <a class="manya" href="#">
+                        <i class="fa fa-user  " aria-hidden="true"></i>
+                    </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="newdiv"><div style="text-align: center;
+                position: absolute;
+                left: 32%;
+                font-size: larger;" >Now use Microsoft Teams with family and friends to call, chat, and make plans.
+                </div></div>
+            <div class="row">
+                <div class="col-12 h4 mt-5 text-center">Your Name</div>
+            </div>
+            
+            <div class="row mt-2">
+                <div class="col-12 text-center">
+                    <span class="form-text small text-danger" id='err-msg-username'></span>
+                </div>
+
+                <div class="col-12 col-md-4 offset-md-4 mb-3">
+                    <label for="username">Your Name</label>
+                    <input type="text" id='username' class="form-control rounded-0" placeholder="Your Name">
+                </div>
+
+                <div class="col-12 col-md-4 offset-md-4 mb-3">
+                    <button id='enter-room' class="btn btn-block rounded-0 btn-info">Enter Room</button>
+                </div>
+            </div>
+            
+        </div>
+
+        <div class="container-fluid room-comm" hidden>
+            <div class="row">
+                <video class="local-video mirror-mode" id='local' volume='0' autoplay muted></video>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-12 main" id='main-section'>                    
+                    <div class="row mt-2 mb-2" id='videos'></div>
+                </div>
+
+                <div class="col-md-3 chat-col d-print-none mb-2 " id='chat-pane' hidden>
+                    <div class="row">
+                        <div class="col-12 text-center h2 mb-3">In call messages</div>
+                    </div>
+
+                    <div id='chat-messages'></div>
+
+                    <div class="row">
+                        <textarea id='chat-input' class=" chat-box1 border-info" rows='3' placeholder="Type here..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
