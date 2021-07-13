@@ -2,6 +2,8 @@
 
 This service facilitates video calling and instant messaging, where the users can form private rooms for video calling and instant messaging.
 
+![WhatsApp Image 2021-07-13 at 8 00 30 PM](https://user-images.githubusercontent.com/70299542/125472880-2ed48a47-31e8-4f1b-bd2c-279a50264998.png)
+
 ## Technologies
 
 ### Project is created with:
