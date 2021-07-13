@@ -9,6 +9,8 @@ This service facilitates video calling and instant messaging, where the users ca
 ### Project is created with:
 * HTML, CSS and JAVASCRIPT
 * Nodejs (Backend)
+ 
+### Dependencies
 * Express JS
 * Socket.IO
 * PeerJS
@@ -34,8 +36,8 @@ This service facilitates video calling and instant messaging, where the users ca
         * helpers.js
         * images.png
         * rtc.js
-* favicon.ico
-* index.html
+   * favicon.ico
+   * index.html
 * src
    * stream.js
 * .gitattributes
