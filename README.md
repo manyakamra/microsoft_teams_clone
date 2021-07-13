@@ -45,7 +45,7 @@ This service facilitates video calling and instant messaging, where the users ca
 * app.js
 * package-lock.json
 * package.json
-* versal.json
+* vercel.json
 
 ## App link
 * https://infinite-meadow-94681.herokuapp.com/
