@@ -53,6 +53,6 @@ This service facilitates video calling and instant messaging, where the users ca
 ## Setup
 To run this project, install it locally using npm:
 
-#### command                
+#### Commands              
         $ npm install
         $ npm start
